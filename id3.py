@@ -8,6 +8,7 @@ import gc
 import psutil
 
 import sys
+import argparse
 
 eyed3.log.setLevel("ERROR")
 
@@ -109,14 +110,33 @@ def process_song(fname):
 def onError(e):
 	print("OnError:",e)
 
-for dirName, subdirList, fileList in os.walk(PATH, onerror=onError):
-	if(dirName in SKIP):
-		print(dirName, dirName in SKIP)
+def dir_path(string):
+	if os.path.isdir(string):
+		return string
 	else:
-		for fname in fileList:
-			i = i + 1
-			if(i>N):
-				process_song("/".join([dirName, fname]))
-#			if(i % M == 0):
-#				print(psutil.Process().num_fds(), gc.get_stats(), i)
+		raise NotADirectoryError(string)
+
+def setup_args():
+	parser = argparse.ArgumentParser(description='Id3 tags parser')
+	parser.add_argument("directory", nargs='?', type=dir_path, default="/home/jose/Music/tmp", help='Directory where files to parse are')
+	args = parser.parse_args()
+	return args
+
+def traverse(path):
+	i = 0
+	for dirName, subdirList, fileList in os.walk(path, onerror=onError):
+		if(dirName in SKIP):
+			print(dirName, dirName in SKIP)
+		else:
+			for fname in fileList:
+				i = i + 1
+				if(i>N):
+					process_song("/".join([dirName, fname]))
+#				if(i % M == 0):
+#					print(psutil.Process().num_fds(), gc.get_stats(), i)
+
+
+if __name__ == "__main__":
+	args = setup_args()
+	traverse(args.directory)
 
