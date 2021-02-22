@@ -32,9 +32,6 @@ N = 0
 M = 20
 
 def save(self, filename=None, version=None, encoding=None, backup=False, preserve_file_time=False, max_padding=None):
-	if(self.artist or self.title):
-		print(self.artist, "--", self.title, ":", self.fname)
-	return
 	try:
 		self.oldsave(filename, version, encoding,backup, preserve_file_time, max_padding)
 	except:
@@ -53,8 +50,8 @@ eyed3.id3.tag.Tag.save = save
 def process_song(fname):
 	a = eyed3.load(fname)
 
-	if(not a or not a.tag or (a.tag.artist and a.tag.title)):
-		#print(1)
+	if(not a or not a.tag):
+		print(1)
 		return
 
 	a.tag.fname = fname
@@ -77,7 +74,7 @@ def process_song(fname):
 			a.tag.genre  = G_NONE
 			a.tag.save()
 		print(3)
-	if((a.tag.artist == "KCRW" or a.tag.artist == "KEXP") and a.tag.title):
+	if(a.tag.artist and (a.tag.artist == "KCRW" or a.tag.artist == "KEXP") and a.tag.title):
 		m = P3.match(a.tag.title)
 		if(m):
 			a.tag.artist = m.group(1)
@@ -87,7 +84,7 @@ def process_song(fname):
 				a.tag.title  = m.group(2)
 			a.tag.save()
 		print(4)
-	if(a.tag.artist == "KEXP" and a.tag.title):
+	if(a.tag.artist and a.tag.artist == "KEXP" and a.tag.title):
 		m = P4.match(a.tag.title)
 		if(m):
 			a.tag.artist = m.group(1)
@@ -95,7 +92,7 @@ def process_song(fname):
 			a.tag.genre  = G_NONE
 			a.tag.save()
 		print(5)
-	if(a.tag.artist == "MPR" and a.tag.title):
+	if(a.tag.artist and a.tag.artist == "MPR" and a.tag.title):
 		m = P4.match(a.tag.title)
 		if(m):
 			a.tag.artist = m.group(1)
@@ -132,8 +129,8 @@ def traverse(path):
 				i = i + 1
 				if(i>N):
 					process_song("/".join([dirName, fname]))
-#				if(i % M == 0):
-#					print(psutil.Process().num_fds(), gc.get_stats(), i)
+				if(i % M == 0):
+					print(psutil.Process().num_fds(), gc.get_stats(), i)
 
 
 if __name__ == "__main__":
