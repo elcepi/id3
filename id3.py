@@ -18,7 +18,8 @@ PATH = "/home/jose/Music/tmp"
 P1 = re.compile("^(.+): (.+)$")
 P2 = re.compile("^(00 - )?(.+) ?- ?(.+)(\.mp3)?$")
 P3 = re.compile("^(.+): (?:[\"\“]?)([^\"\”]+)(?:[\"\”]?)(.*)$")
-P4 = re.compile("^(.+) ??- ?(.+)$")
+P4 = re.compile("^(.+) ??- ?(.+)(?:\.mp3)$")
+P5 = re.compile("^\\d{8}_[a-z_]+_128.mp3$")
 
 G_PODCAST = eyed3.id3.Genre("Podcast")
 G_SLASH   = eyed3.id3.Genre("/")
@@ -47,7 +48,7 @@ def save(self, filename=None, version=None, encoding=None, backup=False, preserv
 eyed3.id3.tag.Tag.oldsave = eyed3.id3.tag.Tag.save
 eyed3.id3.tag.Tag.save = save
 
-def process_song(fname):
+def process_song(fname, name = None):
 	a = eyed3.load(fname)
 
 	if(not a or not a.tag):
@@ -63,6 +64,7 @@ def process_song(fname):
 			a.tag.title  = m.grou(2)
 			a.tag.genre  = G_NONE
 			a.tag.save()
+			return
 		print(2)
 	if((a.tag.genre and a.tag.genre == G_PODCAST and a.tag.title) or
 		(a.tag.genre and not a.tag.genre == G_NONE and a.tag.title)):
@@ -73,6 +75,7 @@ def process_song(fname):
 			a.tag.title  = m.group(2)
 			a.tag.genre  = G_NONE
 			a.tag.save()
+			return
 		print(3)
 	if(a.tag.artist and (a.tag.artist == "KCRW" or a.tag.artist == "KEXP") and a.tag.title):
 		m = P3.match(a.tag.title)
@@ -83,6 +86,7 @@ def process_song(fname):
 			else:
 				a.tag.title  = m.group(2)
 			a.tag.save()
+			return
 		print(4)
 	if(a.tag.artist and a.tag.artist == "KEXP" and a.tag.title):
 		m = P4.match(a.tag.title)
@@ -91,6 +95,7 @@ def process_song(fname):
 			a.tag.title  = m.group(2)
 			a.tag.genre  = G_NONE
 			a.tag.save()
+			return
 		print(5)
 	if(a.tag.artist and a.tag.artist == "MPR" and a.tag.title):
 		m = P4.match(a.tag.title)
@@ -99,10 +104,13 @@ def process_song(fname):
 			a.tag.title  = m.group(2)
 			a.tag.genre  = G_NONE
 			a.tag.save()
+			return
 		print(6)
+	if(name and P5.match(name)):
+		#print(7)
+		pass
 	else:
-		a.tag.save()
-		print(7, a.tag.fname)
+		print(8, a.tag.fname)
 
 def onError(e):
 	print("OnError:",e)
@@ -128,7 +136,7 @@ def traverse(path):
 			for fname in fileList:
 				i = i + 1
 				if(i>N):
-					process_song("/".join([dirName, fname]))
+					process_song("/".join([dirName, fname]),fname)
 				if(i % M == 0):
 					print(psutil.Process().num_fds(), gc.get_stats(), i)
 
