@@ -16,6 +16,8 @@ G_NONE    = eyed3.id3.Genre()
 
 def save(self, filename=None, version=None, encoding=None, backup=False, preserve_file_time=False, max_padding=None):
 	if (self.artist and self.title and hasattr(self, 'dirty')):
+		self.artist = self.artist.replace("\\", "")
+		self.title = self.title.replace("\\", "")
 		self.oldsave(filename, version, encoding,backup, preserve_file_time, max_padding)
 		delattr(self, 'dirty')
 
