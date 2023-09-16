@@ -9,8 +9,8 @@ import argparse
 eyed3.log.setLevel("ERROR")
 
 P1 = re.compile("^(.*) +- +(.*)$")
-P2 = re.compile("^(.*): +[‘'](.*)[’']$")
-P3 = re.compile("^(.*): +[‘'](.*)[’'] (.*)$")
+P2 = re.compile("^(.*): +[‘'\"”](.*)[’'\"”]$")
+P3 = re.compile("^(.*): +[‘'\"”](.*)[’'\"”“] (.*)$")
 
 G_NONE    = eyed3.id3.Genre()
 
@@ -31,7 +31,7 @@ def process_song(fname, name = None):
 		return
 
 	a.tag.fname = os.path.basename(fname)
-	if(a.tag.artist == "KEXP" or a.tag.artist == "KCRW" or a.tag.artist == "MPR"):
+	if(a.tag.artist == "KEXP" or a.tag.artist == "KCRW" or a.tag.artist == "MPR" or a.tag.artist == "Minnesota Public Radio"):
 		if(P1.match(a.tag.title)):
 			m = P1.match(a.tag.title)
 			a.tag.artist = m.group(1)
@@ -49,7 +49,7 @@ def process_song(fname, name = None):
 			a.tag.dirty = True
 		else:
 			print("No parsed", a.tag.title)
-	elif(a.tag.artist and a.tag.title.startswith(a.tag.artist)):
+	elif(a.tag.artist and a.tag.title and a.tag.title.startswith(a.tag.artist)):
 		a.tag.title = a.tag.title.replace(a.tag.artist + " - " , "")
 		a.tag.dirty = True
 	else:
@@ -69,7 +69,7 @@ def dir_path(string):
 
 def setup_args():
 	parser = argparse.ArgumentParser(description='Id3 tags seter')
-	parser.add_argument("directory", nargs='1', type=dir_path, help='Directory where files are', required=True)
+	parser.add_argument("directory", nargs=1, type=dir_path, help='Directory where files are')
 	args = parser.parse_args()
 	return args
 
@@ -81,5 +81,5 @@ def traverse(path):
 
 if __name__ == "__main__":
 	args = setup_args()
-	traverse(args.directory)
+	traverse(args.directory[0])
 
