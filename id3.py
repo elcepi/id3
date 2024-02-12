@@ -18,12 +18,13 @@ def save(self, filename=None, version=None, encoding=None, backup=False, preserv
 	if (self.artist and self.title and hasattr(self, 'dirty')):
 		self.artist = self.artist.replace("\\", "")
 		self.title = self.title.replace("\\", "")
+		if(version==eyed3.id3.ID3_V2_2 or version==None):
+			version = eyed3.id3.ID3_V2_3
 		self.oldsave(filename, version, encoding,backup, preserve_file_time, max_padding)
 		delattr(self, 'dirty')
 
 eyed3.id3.tag.Tag.oldsave = eyed3.id3.tag.Tag.save
 eyed3.id3.tag.Tag.save = save
-
 def process_song(fname, name = None):
 	a = eyed3.load(fname)
 
@@ -77,7 +78,6 @@ def traverse(path):
 	for dirName, subdirList, fileList in os.walk(path, onerror=onError):
 		for fname in fileList:
 			process_song("/".join([dirName, fname]),fname)
-
 
 if __name__ == "__main__":
 	args = setup_args()
