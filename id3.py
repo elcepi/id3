@@ -53,6 +53,18 @@ def process_song(fname, name = None):
 	elif(a.tag.artist and a.tag.title and a.tag.title.startswith(a.tag.artist)):
 		a.tag.title = a.tag.title.replace(a.tag.artist + " - " , "")
 		a.tag.dirty = True
+	elif(a.tag.title and P1.match(a.tag.title)):
+		m = P1.match(a.tag.title)
+		a.tag.artist = m.group(1)
+		a.tag.title = m.group(2)
+		a.tag.dirty = True
+	elif(a.tag.fname and P3.match(a.tag.fname)):
+		m = P3.match(a.tag.fname)
+		a.tag.artist = m.group(1)
+		a.tag.title = m.group(2)
+		a.tag.dirty = True
+	elif(a.tag.genre == "KUTX Song of the Day" or (a.tag.artist and a.tag.title)):
+		pass
 	else:
 		print("NO PARSED", a.tag.fname)
 
