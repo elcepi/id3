@@ -68,7 +68,11 @@ def process_song(fname, name = None):
 	else:
 		print("NO PARSED", a.tag.fname)
 
+	a.tag.images.remove('')
 	a.tag.genre  = G_NONE
+
+	audio.tag.save(version=(2,3,0))
+	audio.tag.save(version=(2,4,0))
 	a.tag.save()
 
 def onError(e):
