@@ -21,17 +21,19 @@ def save(self, filename=None, version=None, encoding=None, backup=False, preserv
 		if(version==eyed3.id3.ID3_V2_2 or version==None):
 			version = eyed3.id3.ID3_V2_3
 		self.oldsave(filename, version, encoding,backup, preserve_file_time, max_padding)
-		delattr(self, 'dirty')
+#		delattr(self, 'dirty')
 
 eyed3.id3.tag.Tag.oldsave = eyed3.id3.tag.Tag.save
 eyed3.id3.tag.Tag.save = save
-def process_song(fname, name = None):
+def process_song(fname):
+	# print(fname)
+	name = os.path.basename(fname)
 	a = eyed3.load(fname)
 
 	if(not a or not a.tag):
+		print("No ID3 info found", fname)
 		return
 
-	a.tag.fname = os.path.basename(fname)
 	if(a.tag.artist == "KEXP" or a.tag.artist == "KCRW" or a.tag.artist == "MPR" or a.tag.artist == "Minnesota Public Radio"):
 		if(P1.match(a.tag.title)):
 			m = P1.match(a.tag.title)
@@ -58,25 +60,22 @@ def process_song(fname, name = None):
 		a.tag.artist = m.group(1)
 		a.tag.title = m.group(2)
 		a.tag.dirty = True
-	elif(a.tag.fname and P3.match(a.tag.fname)):
-		m = P3.match(a.tag.fname)
+	elif(P3.match(name)):
+		m = P3.match(name)
 		a.tag.artist = m.group(1)
 		a.tag.title = m.group(2)
 		a.tag.dirty = True
 	elif(a.tag.genre == "KUTX Song of the Day" or (a.tag.artist and a.tag.title)):
 		pass
 	else:
-		print("NO PARSED", a.tag.fname)
+		print("NO PARSED", fname)
 
 	a.tag.images.remove('')
 	a.tag.genre  = G_NONE
 
-	audio.tag.save(version=(2,3,0))
-	audio.tag.save(version=(2,4,0))
+	a.tag.save(version=(2,3,0))
+	a.tag.save(version=(2,4,0))
 	a.tag.save()
-
-def onError(e):
-	print("OnError:",e)
 
 def dir_path(string):
 	if os.path.isdir(string):
@@ -91,9 +90,10 @@ def setup_args():
 	return args
 
 def traverse(path):
-	for dirName, subdirList, fileList in os.walk(path, onerror=onError):
-		for fname in fileList:
-			process_song("/".join([dirName, fname]),fname)
+	for myfile in os.scandir(path):
+		if myfile.is_file():
+#			print(myfile.path)
+			process_song(myfile.path)
 
 if __name__ == "__main__":
 	args = setup_args()
