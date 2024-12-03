@@ -11,6 +11,7 @@ eyed3.log.setLevel("ERROR")
 P1 = re.compile("^(.*) +- +(.*)$")
 P2 = re.compile("^(.*): +[‘'\"”](.*)[’'\"”]$")
 P3 = re.compile("^(.*): +[‘'\"”](.*)[’'\"”“] (.*)$")
+P4 = re.compile("^\d*-(.*)_\s*[‘'\"”](.*)[’'\"”“].mp3$")
 
 G_NONE    = eyed3.id3.Genre()
 
@@ -48,6 +49,10 @@ def process_song(fname):
 		a.tag.title = m.group(2)
 	elif(P3.match(name)):
 		m = P3.match(name)
+		a.tag.artist = m.group(1)
+		a.tag.title = m.group(2)
+	elif(P4.match(name)):
+		m = P4.match(name)
 		a.tag.artist = m.group(1)
 		a.tag.title = m.group(2)
 	elif(a.tag.genre == "KUTX Song of the Day" or (a.tag.artist and a.tag.title)):
