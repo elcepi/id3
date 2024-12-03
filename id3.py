@@ -60,8 +60,8 @@ def process_song(fname):
 	else:
 		print("NO PARSED", fname)
 
-	a.tag.artist = a.tag.artist.replace("\\", "")
-	a.tag.title = a.tag.title.replace("\\", "")
+	if a.tag.artist: a.tag.artist = a.tag.artist.replace("\\", "")
+	if a.tag.title: a.tag.title = a.tag.title.replace("\\", "")
 
 #	print(a.tag.images)
 	a.tag.images.remove('')
