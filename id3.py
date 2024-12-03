@@ -70,6 +70,8 @@ def process_song(fname):
 	except:
 		print(":()")
 
+	print("dir2ogg  --recursive --directory --delete-input --smart-mp3 /home/jose/Documents/Podcast/Song\ of\ the\ Day")
+
 def dir_path(string):
 	if os.path.isdir(string):
 		return string
