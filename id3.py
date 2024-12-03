@@ -65,7 +65,10 @@ def process_song(fname):
 
 	a.tag.genre  = G_NONE
 
-	a.tag.save()
+	try:
+		a.tag.save()
+	except:
+		print(":()")
 
 def dir_path(string):
 	if os.path.isdir(string):
