@@ -16,7 +16,6 @@ P4 = re.compile("^\d*-(.*)_\s*[‘'\"”](.*)[’'\"”“].mp3$")
 G_NONE    = eyed3.id3.Genre()
 
 def process_song(fname):
-	# print(fname)
 	name = os.path.basename(fname)
 	a = eyed3.load(fname)
 
@@ -25,7 +24,6 @@ def process_song(fname):
 		return
 
 	a.tag.header._version = eyed3.id3.ID3_V2_4
-	#print(a.tag.header._version) #(eyeD3.ID3_V2_3)
 	if(a.tag.artist == "KEXP" or a.tag.artist == "KCRW" or a.tag.artist == "MPR" or a.tag.artist == "Minnesota Public Radio"):
 		if(P1.match(a.tag.title)):
 			m = P1.match(a.tag.title)
@@ -63,7 +61,6 @@ def process_song(fname):
 	if a.tag.artist: a.tag.artist = a.tag.artist.replace("\\", "")
 	if a.tag.title: a.tag.title = a.tag.title.replace("\\", "")
 
-#	print(a.tag.images)
 	a.tag.images.remove('')
 
 	a.tag.genre  = G_NONE
@@ -85,7 +82,6 @@ def setup_args():
 def traverse(path):
 	for myfile in os.scandir(path):
 		if myfile.is_file():
-#			print(myfile.path)
 			process_song(myfile.path)
 
 if __name__ == "__main__":
