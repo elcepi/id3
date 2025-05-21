@@ -61,8 +61,6 @@ def process_song(fname):
 	if a.tag.artist: a.tag.artist = a.tag.artist.replace("\\", "")
 	if a.tag.title: a.tag.title = a.tag.title.replace("\\", "")
 
-	a.tag.images.remove('')
-
 	a.tag.genre  = G_NONE
 
 	try:
